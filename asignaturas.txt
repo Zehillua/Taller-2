@@ -1,2 +1,3 @@
-1285,termodinámica,8,obligatoria,2,3,1284,1085,9450
+1285,termodinámica,8,obligatoria,3,3,1284,1085,9450
 1286,belga,4,opcional,14
+1287,programacion,8,obligatoria,2,2,1453,2145

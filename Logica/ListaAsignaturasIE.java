@@ -46,6 +46,17 @@ public class ListaAsignaturasIE {
         return null;
     }
 
+    public AsignaturaIEstudiante buscaAsignaturaIEstudianteP(int paralelo){
+        for(int i =0;i<cant;i++){
+            AsignaturaIEstudiante aIE = listaAI[i];
+            int paralelo2 = aIE.getParalelo();
+            if(paralelo2 == paralelo){
+                return aIE;
+            }
+        }
+        return null;
+    }
+
     public boolean eliminarAsignaturaIE(int codigo){
         int i;
         for(i=0;i<cant;i++){

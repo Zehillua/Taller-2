@@ -38,6 +38,5 @@ public abstract class Asignatura {
     public ListaAlumnos getListaA() {
         return listaA;
     }
-
     
 }

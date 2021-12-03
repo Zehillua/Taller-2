@@ -4,7 +4,6 @@ public class AsignaturaIEstudiante {
     
     private int codigo;
     private int paralelo;
-
     
     public AsignaturaIEstudiante(int codigo, int paralelo) {
         this.codigo = codigo;
@@ -19,5 +18,4 @@ public class AsignaturaIEstudiante {
     public int getParalelo() {
         return paralelo;
     }
-
 }

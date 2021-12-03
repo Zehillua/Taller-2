@@ -44,6 +44,17 @@ public class ListaAsignaturas {
         }
         return null;
     }
+
+    public Asignatura buscarAsignaturaC(int codigo){
+        for(int i=0;i<cant;i++){
+            Asignatura as = listaAs[i];
+            int codigo2 = as.getCodigo();
+            if(codigo2 == codigo){
+                return as;
+            }
+        }
+        return null;
+    }
  
     public boolean eliminarAsignatura(String nombre){
         int i;

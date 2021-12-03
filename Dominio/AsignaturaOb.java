@@ -1,18 +1,19 @@
 package Dominio;
 
+import Logica.ListaAsignaturas;
+import Logica.ListaCodigos;
+
 public class AsignaturaOb extends Asignatura {
 
     private int nivelMalla;
     private int cantAsPre;
-    private int codigoPre;
-
+    private ListaCodigos listaCodigos;
     
-    public AsignaturaOb(int codigo, String nombre, int creditos, String tipo, int nivelMalla, int cantAsPre,
-            int codigoPre) {
+    public AsignaturaOb(int codigo, String nombre, int creditos, String tipo, int nivelMalla, int cantAsPre) {
         super(codigo, nombre, creditos, tipo);
         this.nivelMalla = nivelMalla;
         this.cantAsPre = cantAsPre;
-        this.codigoPre = codigoPre;
+        listaCodigos = new ListaCodigos(10);
     }
 
 
@@ -24,8 +25,7 @@ public class AsignaturaOb extends Asignatura {
         return cantAsPre;
     }
 
-    public int getCodigoPre() {
-        return codigoPre;
+    public ListaCodigos getListaCodigos(){
+        return listaCodigos;
     }
-
 }
