@@ -8,6 +8,9 @@ public class SistemaUCRImpl implements SistemaUCR {
     private ListaAsignaturas lAsignaturas;
     private ListaParalelos lParalelos;
     private ListaProfesores lProfesores;
+    private ListaCodigos lCodigos;
+    private ListaAsignaturasE lAsignaturasE;
+    private ListaAsignaturasIE lAsignaturasIE;
 
     public SistemaUCRImpl(){
 
@@ -16,6 +19,9 @@ public class SistemaUCRImpl implements SistemaUCR {
         lAsignaturas = new ListaAsignaturas(10000);
         lParalelos = new ListaParalelos(10000);
         lProfesores = new ListaProfesores(10000);
+        lCodigos = new ListaCodigos(1000);
+        lAsignaturasE = new ListaAsignaturasE(1000);
+        lAsignaturasIE = new ListaAsignaturasIE(1000);
     }
 
     @Override
@@ -37,7 +43,6 @@ public class SistemaUCRImpl implements SistemaUCR {
             }
             
         }
-        
     }
 
     @Override
@@ -50,7 +55,14 @@ public class SistemaUCRImpl implements SistemaUCR {
             }
             
         }
-        
+        for(int i=0;i<lParalelos.getCant();i++){
+            Paralelo p = lParalelos.getParaleloI(i);
+            if(a!=null){ 
+                if(p.getParalelo() == aIE.getParalelo()){
+                    p.getListaAl().addAlumno(a);
+                }
+            }
+        }
     }
 
     @Override
@@ -63,13 +75,26 @@ public class SistemaUCRImpl implements SistemaUCR {
     }
 
     @Override
-    public void IngresarAsignaturaOb(int codigo, String nombre, int creditos, String tipo, int nivelMalla,
-            int cantAsPre, int codigoPre) {
-            AsignaturaOb aOB = new AsignaturaOb(codigo, nombre, creditos, tipo, nivelMalla, cantAsPre, codigoPre);
+    public void IngresarAsignaturaOb(int codigo, String nombre, int creditos, String tipo, int nivelMalla, int cantAsPre) {
+            AsignaturaOb aOB = new AsignaturaOb(codigo, nombre, creditos, tipo, nivelMalla, cantAsPre);
             if(!lAsignaturas.addAsignatura(aOB)){
                 throw new NullPointerException("Error al ingresar una asignatura obligatoria.");
             }
         
+    }
+
+    @Override
+    public void agregarCodigosAsOb(String nombre, int codigoPre) {
+        CodigoAsignaturas cA = new CodigoAsignaturas(codigoPre);
+        for(int i=0;i<lAsignaturas.getCant();i++){
+            Asignatura a = lAsignaturas.getAsignaturaI(i);
+            if(a instanceof AsignaturaOb){
+                AsignaturaOb aOB = (AsignaturaOb) a;
+                if(aOB.getNombre().equals(nombre)){
+                    aOB.getListaCodigos().addCodigos(cA);
+                }
+            }
+        }
     }
 
     @Override
@@ -78,6 +103,7 @@ public class SistemaUCRImpl implements SistemaUCR {
         if(!lAsignaturas.addAsignatura(aOP)){
             throw new NullPointerException("Error al ingresar una asignatura opcional.");
         }
+        
         
     }
 
@@ -99,6 +125,17 @@ public class SistemaUCRImpl implements SistemaUCR {
         
     }
 
+    
+
+    @Override
+    public void cantAsignaturaInscrita(String rut, int cantAI) {
+        Alumno a = lAlumnos.buscarAlumnoR(rut);
+        if(a!=null){
+            a.setCantAI(cantAI);
+        }
+        
+    }
+
     @Override
     public String archivoEgresados() {
         // TODO Auto-generated method stub
@@ -107,8 +144,30 @@ public class SistemaUCRImpl implements SistemaUCR {
 
     @Override
     public void chequeoAlumno(String correo) {
-        // TODO Auto-generated method stub
+        Profesor p = lProfesores.buscaProfesor(correo);
+        for(int i=0;i<lParalelos.getCant();i++){
+            Paralelo pA = lParalelos.getParaleloI(i);
+            if(pA.getRutP().equals(p.getRutP())){
+                System.out.println(pA.getParalelo());
+
+            }
+        }
         
+    }
+
+    @Override
+    public void chequeoAlumno2(String correo, int paralelo) {
+        Profesor p = lProfesores.buscaProfesor(correo);
+        for(int i=0;i<lParalelos.getCant();i++){
+            Paralelo pA = lParalelos.getParaleloI(i);
+            if(pA.getRutP().equals(p.getRutP())){
+                for(int j=0;j<pA.getListaAl().getCant();j++){
+                    Alumno a = lAlumnos.getAlumnoI(j);
+                    System.out.println("Rut: "+a.getRutA()+"\nCorreo: "+a.getCorreoA());
+                }
+            }   
+        }
+
     }
 
     @Override
@@ -160,14 +219,67 @@ public class SistemaUCRImpl implements SistemaUCR {
     }
 
     @Override
-    public void inscripcionAsignatura(String correo) {
-        // TODO Auto-generated method stub
+    public String inscripcionAsignatura(String correo) {
+        String salida = "";
+        Alumno a = lAlumnos.buscarAlumnoC(correo);
+        for(int i=0;i<lAsignaturas.getCant();i++){
+            Asignatura as = lAsignaturas.getAsignaturaI(i);
+            if(as instanceof AsignaturaOb){
+                AsignaturaOb aOb = (AsignaturaOb) as;
+                if(a.getCreditos()+aOb.getCreditos()<=40 && a.getNivel()>=aOb.getNivelMalla()){
+                    System.out.println("Asignatura: "+aOb.getNombre()+"\nCodigo: "+aOb.getCodigo()+"\n");
+                    
+                }
+            }
+        }
+        return salida;
+    }
+
+    @Override
+    public void inscripcionAsignatura2(int codigo) {
+        for(int i=0;i<lAsignaturas.getCant();i++){
+            Asignatura a = lAsignaturas.getAsignaturaI(i);
+            if(a.getCodigo() == codigo){
+                for(int j=0;j<lParalelos.getCant();j++){
+                    Paralelo p = lParalelos.getParaleloI(i);
+                    if(p.getCodigo() == codigo){
+                        System.out.println("Paralelo: "+p.getParalelo());
+                    }
+                }
+            }
+        }
         
     }
 
     @Override
     public void notaFinal(String correo) {
-        // TODO Auto-generated method stub
+        Profesor p = lProfesores.buscaProfesor(correo);
+        for(int i=0;i<p.getListaAs().getCant();i++){
+            Asignatura a = lAsignaturas.getAsignaturaI(i);
+            System.out.println("Asignatura: "+a.getNombre()+" Codigo: "+a.getCodigo());
+        }        
+    }    
+
+    @Override
+    public void notaFinal2(String correo, int codigo) {
+        Asignatura a = lAsignaturas.buscarAsignaturaC(codigo);
+        for(int i=0;i<a.getListaA().getCant();i++){
+            Alumno al = lAlumnos.getAlumnoI(i);
+            System.out.println("Alumno: "+al.getRutA());
+        }
+        
+    }
+
+    @Override
+    public void notaFinal3(String rut, int codigo) {
+        Scanner scan = new Scanner(System.in);
+        Alumno a = lAlumnos.buscarAlumnoR(rut);
+        if(a!=null){
+            System.out.println("Ingrese la nota del alumno: ");
+            double notFinal = Double.parseDouble(scan.nextLine());
+            AsignaturaEstudiante aE = a.getListaAE().buscaAsignaturaEstudiante(codigo);
+            aE.setNotaFinal(notFinal);
+        }
         
     }
 
